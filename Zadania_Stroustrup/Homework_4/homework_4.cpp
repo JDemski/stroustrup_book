@@ -2,13 +2,14 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <cmath>
 
 //funkcja ogólnego przeznaczenia
 void clearBufferIn();
-
+void printVectorInt(const std::vector<int>&);
+/*
 //funkcje do punktu 2
 int mediana(std::vector<int>&);
-void printVectorInt(const std::vector<int>&);
 
 //funckje do punktu 3
 double totalDistance(const std::vector<double>&);
@@ -30,10 +31,20 @@ std::string convertDigitToString(const int& intDigit);
 
 //funkcje do punkgtu 7
 void calculatorOneDigit(char& charCalc);
+*/
+//funkcje do punktu 11, 12, 15
+//int find_primes(const int& number);
+
+
+//funkcje do punktu 13 i 14
+//std::vector<int> eratostenes(const int& max);
+
+//funkcje do punktu 16
+int dominant(std::vector<unsigned int>& collection_in); 
+
 
 int main(){
-
-    //Sprawdzić jak wyczyścić bufor wejściowy, bo zostaje tam znak końca linii i nie działa prawidłowo kod punktu 3.
+/*
     //2. Mediana szeregu liczb
     {
         std::cout << "\nProgram obliczajacy mediane szeregu liczb\n";
@@ -141,6 +152,280 @@ int main(){
         }
         clearBufferIn();
     }
+
+    //8. Program obliczający ilość ziaren ryżu dla pola szachownicy
+    {
+        std::vector<int> num_of_rice_grains(64);
+        int count = 0;
+        num_of_rice_grains[count] = 1;
+        while (num_of_rice_grains[count] <= 1000 and count < 63){
+            ++count;
+            num_of_rice_grains[count] = (num_of_rice_grains[count - 1] * 2);   //co będzie jesli biezaca wartosc pozycji vectora nie będzie równa 0?
+            std::cout << "Wartosc elementu nr " << count << " wynosi " << num_of_rice_grains[count] << '\n'; 
+        }
+        
+        std::cout << "Potrzeba " << count << " pol szachownicy aby przekroczyc wartosc 1 000\n";
+
+        while (num_of_rice_grains[count] <= 1000000 and count < 63){
+            ++count;
+            num_of_rice_grains[count] = (num_of_rice_grains[count - 1] * 2);   //co będzie jesli biezaca wartosc pozycji vectora nie będzie równa 0?
+            std::cout << "Wartosc elementu nr " << count << " wynosi " << num_of_rice_grains[count] << '\n'; 
+        }
+
+        std::cout << "Potrzeba " << count << " pol szachownicy aby przekroczyc wartosc 1 000 000\n";
+    }
+
+    //9. Obliczanie ilości ziaren dla typów int i double
+    {
+        std::vector<int> vec_int_rice_grains(64);
+        std::vector<double> vec_double_rice_grains(64);
+        std::vector<float> vec_float_rice_grains(64);
+        int count_1 = 0, count_2 = 0, count_3 = 0;
+        
+        vec_int_rice_grains[count_1] = 1;
+
+        while(count_1 < 64){
+            std::cout << "Wartosc elementu int nr " << count_1 << " wynosi "
+            << vec_int_rice_grains[count_1] << '\n';
+            ++count_1;
+            vec_int_rice_grains[count_1] = (vec_int_rice_grains[count_1 - 1] * 2);
+            
+            int maks_capacity = int(pow(2, ((sizeof(int)*8))-1)-1);
+
+            std::cout << "wartosc maks wynosi: " << maks_capacity << '\n';
+
+            if(vec_int_rice_grains[count_1] == maks_capacity || vec_int_rice_grains[count_1] < 0){
+                std::cout << "Maksymalna ilosc pol dla typu int to: " << (count_1)
+                << " a wartosc " << vec_int_rice_grains[count_1] << '\n';
+                break;
+            }
+                else if(vec_int_rice_grains[count_1] < vec_int_rice_grains[count_1 - 1]){
+                std::cout << "Maksymalna ilosc pol dla typu int to: " << (count_1 - 1)
+                << " a wartosc " << vec_int_rice_grains[count_1 -1] << '\n';
+                break;
+            }
+        }
+
+        //tu dopisać warunke maks z użyciem wartosci maks
+        vec_double_rice_grains[count_2] = 1;
+        while(count_2 < (sizeof(double) * 8)){
+            std::cout << "Wartosc elementu double nr " << count_2 << " wynosi " << vec_double_rice_grains[count_2] << '\n';
+            ++count_2;
+            vec_double_rice_grains[count_2] = (vec_double_rice_grains[count_2 - 1] * 2);
+            
+            if(vec_double_rice_grains[count_2 - 1] > vec_double_rice_grains[count_2]){
+                std::cout << "Maksymalna ilosc pol dla typu double to: " << (count_2 - 1) << " a wartosc " << vec_double_rice_grains[count_2 -1] << '\n';
+                break;
+            }
+        }
+
+        //tu dopisać warunke maks z użyciem wartosci maks
+        vec_float_rice_grains[count_3] = 1;
+        while(count_3 < 64){
+            std::cout << "Wartosc elementu float nr " << count_3 << " wynosi " << vec_float_rice_grains[count_3] << '\n';
+            ++count_3;
+            vec_float_rice_grains[count_3] = (vec_float_rice_grains[count_3 - 1] * 2);
+            
+            if(vec_float_rice_grains[count_3 - 1] > vec_float_rice_grains[count_3]){
+                std::cout << "Maksymalna ilosc pol dla typu float to: " << (count_3 - 1) << " a wartosc " << vec_float_rice_grains[count_3 -1] << '\n';
+                break;
+            }
+        }
+    }
+
+    //10. Papier, kamień, nożyce
+    {
+        std::vector<std::string> comp_answers {"papier", "kamien", "nozyce"};
+
+        int user_answer {};
+
+        //Udoskonalić proces losowego wybierania liczny - na razie się powtarzaja
+        int comp_answer_index = rand() % 3;
+        std::cout << "Wartosc comp_answer_index: " << comp_answer_index << '\n';
+
+        std::cout << "wpisz liczbe odpowiadajaca jednej z trzech wartosci - papier, kamien, nozyce:\n";
+        std::cout << "1 - papier\n";
+        std::cout << "2 - kamien\n";
+        std::cout << "3 - nozyce\n";
+        std::cin >> user_answer;
+
+        switch (user_answer){
+        case 1:
+            std::cout << "Wybrales papier\n";
+            if(comp_answer_index == 0){
+                std::cout << "Remis\n";
+            }
+            else if(comp_answer_index == 1){
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Wygrales!!! - papier owija kamien\n";
+            }
+            else{
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Przegrales:( - nozyce potna papier\n";
+            }
+            break;
+
+        case 2:
+            std::cout << "Wybrales kamien\n";
+            if(comp_answer_index == 1){
+                std::cout << "Remis\n";
+            }
+            else if(comp_answer_index == 0){
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Przegrales:( - papier owija kamien\n";
+            }
+            else{
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Wygrales!!! - Kamien stepi nozyce\n";
+            }
+            break;
+
+        case 3:
+            std::cout << "Wybrales nozyce\n";
+            if(comp_answer_index == 2){
+                std::cout << "Remis\n";
+            }
+            else if(comp_answer_index == 0){
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Wygrales!!! - nozyce potna papier\n";
+            }
+            else{
+                std::cout << "Odpowiedz komputera to " << comp_answers[comp_answer_index] << '\n'
+                << "Przegrales:( - Kamien stepi nozyce\n";
+            }
+            break;
+        
+        default:
+            std::cout << "Niewłasciwa odpowiedz\n";
+            break;
+        }
+
+    }
+
+    //11. Program znajdujacy liczby pierwsze z zakresu 0 - 100
+    //do skompilowania potrzebuję funkcji:
+    //vector<int> find_primes(const int& min, const int& max)
+    //void printVectorInt(const std::vector<int>&)
+
+    {
+        int min {3};
+        int max {100};
+
+        std::cout << "Program do znajdowania liczb pierwszych z zakresu 1 - 100\n";
+        std::cout << "LIczby pierwsze w tym zakresie to: ";
+
+        std::vector<int> primes = find_primes(min, max);
+
+        printVectorInt(primes);
+        
+    }
+
+    //12. Program znajdujacy liczby pierwsze z zakresu 0 - max
+    //to jest modyfikacja programu z punktu 11 - max podaje użytkownik
+    //do skompilowania potrzebuję funkcji:
+    //vector<int> find_primes(const int& min, const int& max)
+    //void printVectorInt(const std::vector<int>&)
+
+    {
+        int min {1};
+        int max {};
+
+        std::cout << "Program do znajdowania liczb pierwszych z zakresu od 1 do max\n";
+        
+        std::cout << "podaj wartosc max: ";
+        std::cin >> max;
+
+        std::cout << "LIczby pierwsze w tym zakresie to: ";
+
+        std::vector<int> primes = find_primes(min, max);
+
+        printVectorInt(primes);
+
+        clearBufferIn();
+        
+    }
+
+    //13. Liczby pierwsze z zakresu 1 - 100 metodą sita Eratostenesa
+    //do skompilowania potrzebuję funkcji:
+    //vector<int> eratostenes(const int& min, const int& max)
+    //void printVectorInt(const std::vector<int>&)
+
+    {
+        int max {100};
+
+        std::cout << "Program do znajdowania liczb pierwszych z zakresu 1 - 100\n";
+        std::cout << "LIczby pierwsze w tym zakresie to: ";
+
+        std::vector<int> primes = eratostenes(max);
+
+        printVectorInt(primes);
+    }
+
+    //14. Liczby pierwsze z zakresu 1 - max metodą sita Eratostenesa
+    //do skompilowania potrzebuję funkcji:
+    //vector<int> eratostenes(const int& min, const int& max)
+    //void printVectorInt(const std::vector<int>&)
+
+    {
+        int max {};
+
+        std::cout << "Program do znajdowania liczb pierwszych z zakresu 1 - max\n";
+
+        std::cout << "Podaj wartosc max: ";
+        std::cin >> max;
+
+        std::cout << "LIczby pierwsze w tym zakresie to: ";
+
+        std::vector<int> primes = eratostenes(max);
+
+        printVectorInt(primes);
+
+        clearBufferIn();
+
+    }
+
+    //15. Liczby pierwsze w ilosci n metodą sita Eratostenesa
+    //do skompilowania potrzebuję funkcji:
+    //vector<int> eratostenes(const int& min, const int& max)
+    //void printVectorInt(const std::vector<int>&)
+    //działa poprawnie tylko do n = 11, powyżej nic nie drukuje
+
+    {
+        //int min {3};
+        //int max = min + 1;
+        unsigned int number {1};
+        unsigned int n {};
+        std::vector<int> primes {};
+
+        std::cout << "Program do znajdowania n liczb pierwszych\n";
+
+        std::cout << "Podaj wartosc n - ilosci liczb pierwszych poczawszy od 1: ";
+        std::cin >> n;
+
+        std::cout << "n - liczb pierwszych wyglada tak: ";
+
+        while(primes.size() < n){
+            //primes = eratostenes(max);
+            if(find_primes(number)){
+                primes.push_back(find_primes(number));
+            }
+            number++;
+            //min++;
+            //max++;
+        }
+
+        printVectorInt(primes);
+
+        clearBufferIn();
+
+    }
+*/
+    //16. Dominanta
+
+    {
+
+    }
+
 
     return 0;
 }
