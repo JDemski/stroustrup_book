@@ -1,0 +1,4 @@
+# ignore cmake gemerated project directories
+Build
+BuildLibraries
+*uild*
